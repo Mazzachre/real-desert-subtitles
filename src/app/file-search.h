@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QUrl>
 #include "../lib/file-hash.h"
+#include "../lib/subtitle-finder.h"
 
 namespace Rd {
     namespace Application {
@@ -22,6 +23,7 @@ namespace Rd {
             Q_SLOT void find(const QUrl& file);
         private:
             Rd::Library::FileHash *m_hash;
+            Rd::Library::SubtitleFinder *m_finder;
             QUrl m_file;
             bool m_working;
         };
