@@ -4,6 +4,7 @@
 #include <QQuickWindow>
 #include "drop-target.h"
 #include "file-search.h"
+#include "feature-model.h"
 
 namespace Rd {
     namespace Application {
@@ -19,6 +20,9 @@ namespace Rd {
             QQuickWindow *m_window;
             DropTarget *m_dropTarget;
             FileSearch *m_fileSearch;
+            FeatureModel *m_features;
+
+            Q_SLOT void handleError(const QString& error);
         };
     }
 }

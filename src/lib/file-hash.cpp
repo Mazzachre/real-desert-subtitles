@@ -25,7 +25,7 @@ QString Rd::Library::FileHash::computeHash(const QUrl& file) const {
     quint64 hash = l_size;
 
     if(!l_file.open(QIODeviceBase::ReadOnly | QIODeviceBase::ExistingOnly)) {
-        Q_EMIT hashError("Unable to open file for hashing");
+        Q_EMIT error("Unable to open file for hashing");
         return "";
     }
 
@@ -34,7 +34,7 @@ QString Rd::Library::FileHash::computeHash(const QUrl& file) const {
 
     hash += hashChunk(stream);
     if (stream.status() != QDataStream::Ok) {
-        Q_EMIT hashError("Unable to hash first 64K");
+        Q_EMIT error("Unable to hash first 64K");
         return "";
     }
 
@@ -42,7 +42,7 @@ QString Rd::Library::FileHash::computeHash(const QUrl& file) const {
 
     hash += hashChunk(stream);
     if (stream.status() != QDataStream::Ok) {
-        Q_EMIT hashError("Unable to hash last 64K");
+        Q_EMIT error("Unable to hash last 64K");
         return "";
     }
 

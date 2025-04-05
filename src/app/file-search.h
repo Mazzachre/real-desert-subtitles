@@ -18,10 +18,18 @@ namespace Rd {
 
             bool working() const;
             QString file() const;
-            Q_SIGNAL void workingUpdated();
+            Q_SIGNAL void workingUpdated() const;
 
             Q_SLOT void find(const QUrl& file);
+            Q_SIGNAL void subtitlesFound(const QList<SubtitleResult>& results) const;
+
+            Q_SLOT void clear();
+            Q_SIGNAL void error(const QString& error) const;
         private:
+            Q_SLOT void foundNoSubtitles();
+            Q_SLOT void foundSubtitles(const QList<SubtitleResult>& results);
+            Q_SLOT void handleError(const QString& error);
+
             Rd::Library::FileHash *m_hash;
             Rd::Library::SubtitleFinder *m_finder;
             QUrl m_file;

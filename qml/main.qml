@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import RealDesert
+// import RealDesert
 
 Window {
     Rectangle {
@@ -17,7 +17,7 @@ Window {
     }
 
     Rectangle {
-        visible: !FileSearch.working
+        visible: !(FileSearch.working || FeatureModel.results)
         anchors {
             top: search.bottom
             bottom: act.top
@@ -71,6 +71,65 @@ Window {
     }
 
     Rectangle {
+        visible: FeatureModel.results
+        anchors {
+            top: search.bottom
+            bottom: act.top
+            left: parent.left
+            right: parent.right
+            margins: 3
+        }
+        border {
+            width: 1
+            color: "grey"
+        }
+        radius: 5
+
+        ListView {
+            anchors {
+                fill: parent
+                margins: 3
+            }
+            flickableDirection: Flickable.VerticalFlick
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AlwaysOn
+                active: ScrollBar.AlwaysOn
+            }
+            clip: true
+            model: FeatureModel
+            spacing: 5
+
+            delegate: Rectangle {
+                height: 24
+                width: parent.width - 12
+
+                Row {
+                    spacing: 5
+                    width: parent.width - 8
+                    height: parent.height - 4
+                    anchors.centerIn: parent
+
+                    Text {
+                        text: id
+                        padding: 3
+                    }
+
+                    Text {
+                        text: title
+                        padding: 3
+                    }
+
+                    Text {
+                        text: year
+                        padding: 3
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
         id: "act"
         anchors {
             bottom: parent.bottom
@@ -81,5 +140,14 @@ Window {
         height: 60
         color: "red"
         radius: 5
+
+        Button {
+            anchors.centerIn: parent
+            text: 'Clear'
+            onClicked: {
+                FeatureModel.clear();
+                FileSearch.clear();
+            }
+        }
     }
 }

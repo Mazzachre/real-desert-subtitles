@@ -11,7 +11,7 @@ namespace Rd {
 
             QString computeHash(const QUrl& file) const;
 
-            Q_SIGNAL void hashError(const QString& error) const;
+            Q_SIGNAL void error(const QString& error) const;
         };
     }
 }
