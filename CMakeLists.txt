@@ -14,6 +14,8 @@ qt_add_executable(real-desert-subtitles
     src/app/drop-target.cpp
     src/app/file-search.cpp
     src/app/feature-model.cpp
+    src/app/selected-feature.cpp
+    src/app/subtitle-model.cpp
     src/lib/file-hash.cpp
     src/lib/subtitle-finder.cpp
     src/types/subtitle-result.cpp
@@ -26,6 +28,10 @@ qt_add_qml_module(real-desert-subtitles
         qml/main.qml
     RESOURCES
         images/desert-logo.svg
+        images/foreign.svg
+        images/hash.svg
+        images/hearing-impaired.svg
+        images/comment.svg
 )
 
 target_link_libraries(real-desert-subtitles

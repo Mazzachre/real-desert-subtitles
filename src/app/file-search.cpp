@@ -23,17 +23,17 @@ void Rd::Application::FileSearch::find(const QUrl& file) {
     Q_EMIT workingUpdated();
     m_file = file;
     QString hash = m_hash->computeHash(file);
-    m_finder->findByHash(hash);
+    m_finder->findByFile(hash, file);
 }
 
 void Rd::Application::FileSearch::clear() {
     m_working = false;
+    m_file.clear();
     Q_EMIT workingUpdated();
 }
 
-
 bool Rd::Application::FileSearch::working() const {
-    return m_working;
+    return m_working != 0;
 }
 
 QString Rd::Application::FileSearch::file() const {
@@ -42,17 +42,18 @@ QString Rd::Application::FileSearch::file() const {
 
 void Rd::Application::FileSearch::foundNoSubtitles() {
     if (m_working) {
-        qDebug() << "Found no subtitles for file" << Qt::endl;
-
         m_working = false;
+        m_file.clear();
         Q_EMIT workingUpdated();
+        Q_EMIT error("Found no subtitles for file " + m_file.fileName());
     }
 }
 
-void Rd::Application::FileSearch::foundSubtitles(const QList<SubtitleResult>& results) {
+void Rd::Application::FileSearch::foundSubtitles(const QList<Feature>& results) {
     if (m_working) {
-        Q_EMIT subtitlesFound(results);
+        Q_EMIT subtitlesFound(m_file, results);
         m_working = false;
+        m_file.clear();
         Q_EMIT workingUpdated();
     }
 }
@@ -60,5 +61,6 @@ void Rd::Application::FileSearch::foundSubtitles(const QList<SubtitleResult>& re
 void Rd::Application::FileSearch::handleError(const QString& errorStr) {
     Q_EMIT error(errorStr);
     m_working = false;
+    m_file.clear();
     Q_EMIT workingUpdated();
 }

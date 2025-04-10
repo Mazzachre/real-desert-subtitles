@@ -10,27 +10,27 @@ int Rd::Application::FeatureModel::rowCount(const QModelIndex& parent) const {
 }
 
 QHash<int, QByteArray> Rd::Application::FeatureModel::roleNames() const {
-	QHash<int, QByteArray> roles;
-	roles[IdRole] = "id";
-	roles[TitleRole] = "title";
-	roles[YearRole] = "year";
-	return roles;
+    QHash<int, QByteArray> roles;
+    roles[IdRole] = "id";
+    roles[TitleRole] = "title";
+    roles[YearRole] = "year";
+    return roles;
 }
 
 QVariant Rd::Application::FeatureModel::data(const QModelIndex& index, int role) const {
 	if (index.isValid()) {
+        Feature feature = m_results[index.row()];
         switch(role) {
             case IdRole:
-                return m_results[index.row()].imdbId;
+                return feature.imdbId;
             case TitleRole:
-                return m_results[index.row()].title;
+                return feature.display();
             case YearRole:
-                return m_results[index.row()].year;
+                return QString::number(feature.year);
         }
     }
     return QVariant();
 }
-
 
 void Rd::Application::FeatureModel::clear() {
     beginResetModel();
@@ -43,11 +43,26 @@ bool Rd::Application::FeatureModel::results() const {
     return !m_results.empty();
 }
 
-void Rd::Application::FeatureModel::setResults(const QList<SubtitleResult>& results) {
-    //TODO If we don't find anything we should error
+void Rd::Application::FeatureModel::setResults(const QUrl& file, const QList<Feature>& results) {
+    if (results.size() == 1) {
+        Q_EMIT featureSelected(file, results[0]);
+    } else {
+        m_file = file;
+        beginResetModel();
+        m_results = results;
+        std::sort(m_results.begin(), m_results.end(), featureSort);
+        endResetModel();
+    }
 
-    beginResetModel();
-    m_results = results;
-    endResetModel();
     Q_EMIT resultsUpdated();
+}
+
+void Rd::Application::FeatureModel::selectFeature(quint32 id) {
+    for( int i = 0 ; i < m_results.size() ; ++i ) {
+        Feature feature = m_results[i];
+        if (feature.imdbId == id) {
+            Q_EMIT featureSelected(m_file, feature);
+        }
+    }
+    clear();
 }

@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
 
     Rd::Application::Application application;
 
-    qRegisterMetaType<SubtitleFile>();
-    qRegisterMetaType<SubtitleResult>();
+    qRegisterMetaType<Subtitle>();
+    qRegisterMetaType<Feature>();
 
     application.start(app.primaryScreen()->geometry());
 

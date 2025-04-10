@@ -7,25 +7,28 @@ Rd::Application::Application::Application(QObject *parent)
 , m_window{nullptr}
 , m_dropTarget{new DropTarget}
 , m_fileSearch{new FileSearch}
-, m_features{new FeatureModel} {
+, m_features{new FeatureModel}
+, m_selected{new SelectedFeature}
+, m_subtitles{new SubtitleModel} {
+
     QQmlContext* context = ((QQmlEngine *)m_engine)->rootContext();
     context->setContextProperty("DropTarget", m_dropTarget);
     context->setContextProperty("FileSearch", m_fileSearch);
     context->setContextProperty("FeatureModel", m_features);
-
-    // m_engine->qmlRegisterSingletonInstance("RealDesert", 1, 0, "DropTarget", m_dropTarget);
-    // m_engine->qmlRegisterSingletonInstance("RealDesert", 1, 0, "FileSearch", m_fileSearch);
-    // m_engine->qmlRegisterSingletonInstance("ReadDesert", 1, 0, "FeatureModel", m_features);
+    context->setContextProperty("SelectedFeature", m_selected);
+    context->setContextProperty("SubtitleModel", m_subtitles);
 
     connect(m_dropTarget, &Rd::Application::DropTarget::fileDropped, m_fileSearch, &Rd::Application::FileSearch::find);
     connect(m_fileSearch, &Rd::Application::FileSearch::subtitlesFound, m_features, &Rd::Application::FeatureModel::setResults);
-    connect(m_fileSearch, &Rd::Application::FileSearch::error, this, &Rd::Application::Application::handleError);
+    connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_selected, &Rd::Application::SelectedFeature::setSelected);
+    connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_subtitles, &Rd::Application::SubtitleModel::setSelected);
 }
 
 Rd::Application::Application::~Application() {
     ((QObject*)m_features)->deleteLater();
     ((QObject*)m_fileSearch)->deleteLater();
     ((QObject*)m_dropTarget)->deleteLater();
+    ((QObject*)m_selected)->deleteLater();
     delete m_window;
     delete m_engine;
 }
@@ -40,8 +43,4 @@ void Rd::Application::Application::start(const QRect& dimensions) {
     ((QWindow *)m_window)->setHeight(dimensions.height()/2);
     ((QWindow *)m_window)->setWidth(dimensions.width()/2);
     ((QWindow *)m_window)->show();
-}
-
-void Rd::Application::Application::handleError(const QString& error) {
-    qDebug() << "ERROR:" << error << Qt::endl;
 }

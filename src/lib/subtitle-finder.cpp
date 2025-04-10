@@ -18,12 +18,14 @@ Rd::Library::SubtitleFinder::~SubtitleFinder() {
     delete m_networkAccess;
 }
 
-void Rd::Library::SubtitleFinder::findByHash(const QString& hash) {
+void Rd::Library::SubtitleFinder::findByFile(const QString& hash, const QUrl& file) {
     QUrlQuery query;
-    query.addQueryItem("ai_translated", "exclude");
-    query.addQueryItem("languages", "en");//config value
-    query.addQueryItem("moviehash", hash);
-    QUrl url("https://api.opensubtitles.com/api/v1/subtitles");
+    query.addQueryItem(u"ai_translated"_qs, u"exclude"_qs);
+    query.addQueryItem(u"languages"_qs, u"en"_qs);//config value
+//    query.addQueryItem(u"foreign_parts_only"_qs, u"exclude"_qs);
+    query.addQueryItem(u"moviehash"_qs, hash);
+    query.addQueryItem(u"query"_qs, file.fileName());
+    QUrl url(u"https://api.opensubtitles.com/api/v1/subtitles"_qs);
     url.setQuery(query);
 
     QNetworkRequest req(url);
@@ -33,19 +35,14 @@ void Rd::Library::SubtitleFinder::findByHash(const QString& hash) {
     m_networkAccess->get(req);
 }
 
-QList<SubtitleResult> parseData(const QJsonArray& items) {
-    QList<SubtitleResult> results;
-    for (int i = 0 ; i < items.size() ; ++i) {
-        results << SubtitleResult(items[i].toObject());
-    }
-    return results;
-}
-
 void Rd::Library::SubtitleFinder::handleResponse(QNetworkReply *reply) {
-    //How do we know if we were successful?
     QByteArray result = ((QIODevice *) reply)->readAll();
-
     qDebug() << "Result" << result << Qt::endl;
+
+    if (reply->error() != QNetworkReply::NoError) {
+        Q_EMIT error("Network error - " + ((QIODevice*)reply)->errorString() + QString(result).remove(QRegularExpression("<[^>]*>")).replace(QRegularExpression("[\\s\\n\\r]+"), " "));
+        return;
+    }
 
     QJsonParseError jsonError;
     QJsonDocument doc = QJsonDocument::fromJson(result, &jsonError);
@@ -59,7 +56,7 @@ void Rd::Library::SubtitleFinder::handleResponse(QNetworkReply *reply) {
         return;
     }
 
-    QList<SubtitleResult> results = parseData(doc.object().value(u"data"_qs).toArray());
+    QList<Feature> results = parse(doc.object().value(u"data"_qs).toArray());
     Q_EMIT subtitlesFound(results);
     ((QObject *) reply)->deleteLater();
 }

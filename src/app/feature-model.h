@@ -4,6 +4,7 @@
 #include "../types/subtitle-result.h"
 #include <QHash>
 
+//I can do table view?
 namespace Rd {
     namespace Application {
         class FeatureModel : public QAbstractListModel {
@@ -25,9 +26,13 @@ namespace Rd {
             Q_SIGNAL void resultsUpdated() const;
 
             Q_SLOT void clear();
-            Q_SLOT void setResults(const QList<SubtitleResult>& results);
+            Q_SLOT void setResults(const QUrl& file, const QList<Feature>& results);
+
+            Q_SLOT void selectFeature(quint32 id);
+            Q_SIGNAL void featureSelected(const QUrl& file, const Feature& feature);
         private:
-            QList<SubtitleResult> m_results;
+            QUrl m_file;
+            QList<Feature> m_results;
         };
     }
 }

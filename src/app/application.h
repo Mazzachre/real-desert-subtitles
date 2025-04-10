@@ -5,6 +5,8 @@
 #include "drop-target.h"
 #include "file-search.h"
 #include "feature-model.h"
+#include "selected-feature.h"
+#include "subtitle-model.h"
 
 namespace Rd {
     namespace Application {
@@ -21,8 +23,8 @@ namespace Rd {
             DropTarget *m_dropTarget;
             FileSearch *m_fileSearch;
             FeatureModel *m_features;
-
-            Q_SLOT void handleError(const QString& error);
+            SelectedFeature *m_selected;
+            SubtitleModel *m_subtitles;
         };
     }
 }
