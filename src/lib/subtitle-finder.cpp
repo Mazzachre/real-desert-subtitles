@@ -22,7 +22,7 @@ void Rd::Library::SubtitleFinder::findByFile(const QString& hash, const QUrl& fi
     QUrlQuery query;
     query.addQueryItem(u"ai_translated"_qs, u"exclude"_qs);
     query.addQueryItem(u"languages"_qs, u"en"_qs);//config value
-//    query.addQueryItem(u"foreign_parts_only"_qs, u"exclude"_qs);
+//    query.addQueryItem(u"foreign_parts_only"_qs, u"exclude"_qs);//config value?
     query.addQueryItem(u"moviehash"_qs, hash);
     query.addQueryItem(u"query"_qs, file.fileName());
     QUrl url(u"https://api.opensubtitles.com/api/v1/subtitles"_qs);

@@ -3,13 +3,13 @@
 #include <QAbstractListModel>
 #include <QUrl>
 #include "../types/subtitle-result.h"
+#include "../lib/subtitle-downloader.h"
 
 namespace Rd {
-    namespace Application {
+    namespace Ui {
         class SubtitleModel : public QAbstractListModel {
             Q_OBJECT
             Q_PROPERTY(bool results READ results NOTIFY resultsUpdated)
-            Q_PROPERTY(bool onlyMatch READ onlyMatch WRITE setOnlyMatch NOTIFY onlyMatchUpdated)
         public:
             enum FeatureRoles {
                 IdRole = Qt::UserRole + 1,
@@ -22,6 +22,7 @@ namespace Rd {
             };
 
             SubtitleModel(QObject* parent = nullptr);
+            ~SubtitleModel();
             int rowCount(const QModelIndex& parent = QModelIndex()) const;
             QHash<int, QByteArray> roleNames() const;
             QVariant data(const QModelIndex &index, int role) const;
@@ -29,16 +30,13 @@ namespace Rd {
             bool results() const;
             Q_SIGNAL void resultsUpdated() const;
 
-            bool onlyMatch() const;
-            void setOnlyMatch(bool match);
-            Q_SIGNAL void onlyMatchUpdated() const;
-
+            Q_SLOT void download(quint64 fileId);
             Q_SLOT void setSelected(const QUrl& file, const Feature& feature);
             Q_SLOT void clear();
         private:
-            bool m_onlyMatch;
             QUrl m_file;
             QList<Subtitle> m_subtitles;
+            Rd::Library::SubtitleDownloader* m_downloader;
         };
     }
 }

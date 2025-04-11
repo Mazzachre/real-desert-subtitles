@@ -9,7 +9,7 @@ Rd::Application::Application::Application(QObject *parent)
 , m_fileSearch{new FileSearch}
 , m_features{new FeatureModel}
 , m_selected{new SelectedFeature}
-, m_subtitles{new SubtitleModel} {
+, m_subtitles{new Rd::Ui::SubtitleModel} {
 
     QQmlContext* context = ((QQmlEngine *)m_engine)->rootContext();
     context->setContextProperty("DropTarget", m_dropTarget);
@@ -21,7 +21,7 @@ Rd::Application::Application::Application(QObject *parent)
     connect(m_dropTarget, &Rd::Application::DropTarget::fileDropped, m_fileSearch, &Rd::Application::FileSearch::find);
     connect(m_fileSearch, &Rd::Application::FileSearch::subtitlesFound, m_features, &Rd::Application::FeatureModel::setResults);
     connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_selected, &Rd::Application::SelectedFeature::setSelected);
-    connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_subtitles, &Rd::Application::SubtitleModel::setSelected);
+    connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_subtitles, &Rd::Ui::SubtitleModel::setSelected);
 }
 
 Rd::Application::Application::~Application() {

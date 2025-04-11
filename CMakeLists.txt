@@ -15,10 +15,11 @@ qt_add_executable(real-desert-subtitles
     src/app/file-search.cpp
     src/app/feature-model.cpp
     src/app/selected-feature.cpp
-    src/app/subtitle-model.cpp
     src/lib/file-hash.cpp
     src/lib/subtitle-finder.cpp
+    src/lib/subtitle-downloader.cpp
     src/types/subtitle-result.cpp
+    src/ui/subtitle-model.cpp
 )
 
 qt_add_qml_module(real-desert-subtitles

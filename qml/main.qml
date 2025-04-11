@@ -196,7 +196,7 @@ Window {
                         anchors.fill: parent
                         enabled: true
                         hoverEnabled: true
-                        onClicked: console.log(id);
+                        onClicked: SubtitleModel.download(id)
                     }
 
                     Row {

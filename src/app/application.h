@@ -6,7 +6,7 @@
 #include "file-search.h"
 #include "feature-model.h"
 #include "selected-feature.h"
-#include "subtitle-model.h"
+#include "../ui/subtitle-model.h"
 
 namespace Rd {
     namespace Application {
@@ -24,7 +24,7 @@ namespace Rd {
             FileSearch *m_fileSearch;
             FeatureModel *m_features;
             SelectedFeature *m_selected;
-            SubtitleModel *m_subtitles;
+            Rd::Ui::SubtitleModel *m_subtitles;
         };
     }
 }
