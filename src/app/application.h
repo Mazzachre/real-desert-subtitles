@@ -1,30 +1,24 @@
 #pragma once
 
-#include <QQmlApplicationEngine>
-#include <QQuickWindow>
-#include "drop-target.h"
-#include "file-search.h"
-#include "feature-model.h"
-#include "selected-feature.h"
-#include "../ui/subtitle-model.h"
+#include <QObject>
+#include <QApplication>
+#include "../ui/ui.h"
+#include "../lib/subtitle-finder.h"
 
 namespace Rd {
     namespace Application {
         class Application : public QObject {
             Q_OBJECT
         public:
-            explicit Application(QObject *parent = nullptr);
-            ~Application();
+            explicit Application(const QRect& dimensions, QObject *parent = nullptr);
+            ~Application() noexcept;
 
-            void start(const QRect& dimensions);
+            void start();
         private:
-            QQmlApplicationEngine *m_engine;
-            QQuickWindow *m_window;
-            DropTarget *m_dropTarget;
-            FileSearch *m_fileSearch;
-            FeatureModel *m_features;
-            SelectedFeature *m_selected;
-            Rd::Ui::SubtitleModel *m_subtitles;
+            QRect m_dimensions;
+            Rd::Ui::Ui* m_ui;
+
+            Q_SLOT void whatever(const QUrl& file, const Feature& feature);
         };
     }
 }

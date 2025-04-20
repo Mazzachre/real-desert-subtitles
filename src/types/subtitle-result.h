@@ -14,8 +14,12 @@ struct Subtitle {
     bool fpo; //foreign_parts_only
     QString comments; //comments
 
+    Subtitle();
+    Subtitle(const Subtitle& other);
     Subtitle(bool hearingImpaired, double fps, bool hashMatch, bool fpo, const QString& comments, const QJsonObject& item);
     Subtitle& operator=(const Subtitle& other);
+
+    void clear();
 };
 
 struct {
@@ -45,7 +49,7 @@ struct Feature {
     Feature(const Feature& other);
     Feature& operator=(const Feature& other);
 
-    QString display() const;
+    QString titleDisplay() const;
     QString imdbDisplay() const;
 
     void clear();

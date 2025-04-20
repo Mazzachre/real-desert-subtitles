@@ -3,15 +3,15 @@
 #include <QDebug>
 #include <QFileInfo>
 
-Rd::Application::DropTarget::DropTarget(QObject *parent)
+Rd::Ui::DropTarget::DropTarget(QObject *parent)
 : QObject(parent)
 , m_db{new QMimeDatabase} {}
 
-Rd::Application::DropTarget::~DropTarget() {
+Rd::Ui::DropTarget::~DropTarget() noexcept {
     delete m_db;
 }
 
-bool Rd::Application::DropTarget::acceptEntered(const QList<QUrl>& urls) const {
+bool Rd::Ui::DropTarget::acceptEntered(const QList<QUrl>& urls) const {
     if (urls.count() != 1 || !urls[0].isLocalFile()) return false;
     QFileInfo fileInfo(urls[0].toLocalFile());
     if (!fileInfo.isFile()) return false;
@@ -19,6 +19,6 @@ bool Rd::Application::DropTarget::acceptEntered(const QList<QUrl>& urls) const {
     return type.name().startsWith(u"video/"_qs);
 }
 
-void Rd::Application::DropTarget::handle(const QList<QUrl>& urls) const {
+void Rd::Ui::DropTarget::handle(const QList<QUrl>& urls) const {
     Q_EMIT fileDropped(urls[0]);
 }

@@ -6,20 +6,22 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Qml Quick)
+find_package(QuaZip-Qt6 REQUIRED)
 qt_standard_project_setup()
 
 qt_add_executable(real-desert-subtitles
     src/main.cpp
     src/app/application.cpp
-    src/app/drop-target.cpp
-    src/app/file-search.cpp
-    src/app/feature-model.cpp
-    src/app/selected-feature.cpp
     src/lib/file-hash.cpp
+    src/lib/file-saver.cpp
     src/lib/subtitle-finder.cpp
     src/lib/subtitle-downloader.cpp
     src/types/subtitle-result.cpp
+    src/ui/ui.cpp
+    src/ui/drop-target.cpp
+    src/ui/feature-model.cpp
     src/ui/subtitle-model.cpp
+    src/ui/selected-feature.cpp
 )
 
 qt_add_qml_module(real-desert-subtitles
@@ -42,4 +44,5 @@ target_link_libraries(real-desert-subtitles
     Qt6::Network
     Qt6::Qml
     Qt6::Quick
+    QuaZip::QuaZip
 )

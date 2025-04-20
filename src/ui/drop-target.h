@@ -6,12 +6,12 @@
 #include <QMimeDatabase>
 
 namespace Rd {
-    namespace Application {
+    namespace Ui {
         class DropTarget : public QObject {
             Q_OBJECT
         public:
             explicit DropTarget(QObject *parent = nullptr);
-            ~DropTarget();
+            ~DropTarget() noexcept;
 
             Q_SIGNAL void fileDropped(const QUrl& path) const;
 

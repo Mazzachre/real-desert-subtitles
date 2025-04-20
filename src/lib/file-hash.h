@@ -7,11 +7,9 @@ namespace Rd {
         class FileHash : public QObject {
             Q_OBJECT
         public:
-            FileHash(QObject *parent = nullptr);
-
+            explicit FileHash(QObject *parent = nullptr);
             QString computeHash(const QUrl& file) const;
-
-            Q_SIGNAL void error(const QString& error) const;
+            Q_SIGNAL void error(const QString& error, const QString& body) const;
         };
     }
 }

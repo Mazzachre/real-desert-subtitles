@@ -1,46 +1,23 @@
 #include "application.h"
-#include <QQmlContext>
+// #include "../types/subtitle-result.h"
+// #include "../types/ui-mode.h"
 
-Rd::Application::Application::Application(QObject *parent)
+Rd::Application::Application::Application(const QRect& dimensions, QObject* parent)
 : QObject(parent)
-, m_engine{new QQmlApplicationEngine}
-, m_window{nullptr}
-, m_dropTarget{new DropTarget}
-, m_fileSearch{new FileSearch}
-, m_features{new FeatureModel}
-, m_selected{new SelectedFeature}
-, m_subtitles{new Rd::Ui::SubtitleModel} {
+, m_ui{new Rd::Ui::Ui} {
+    m_dimensions = dimensions;
 
-    QQmlContext* context = ((QQmlEngine *)m_engine)->rootContext();
-    context->setContextProperty("DropTarget", m_dropTarget);
-    context->setContextProperty("FileSearch", m_fileSearch);
-    context->setContextProperty("FeatureModel", m_features);
-    context->setContextProperty("SelectedFeature", m_selected);
-    context->setContextProperty("SubtitleModel", m_subtitles);
-
-    connect(m_dropTarget, &Rd::Application::DropTarget::fileDropped, m_fileSearch, &Rd::Application::FileSearch::find);
-    connect(m_fileSearch, &Rd::Application::FileSearch::subtitlesFound, m_features, &Rd::Application::FeatureModel::setResults);
-    connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_selected, &Rd::Application::SelectedFeature::setSelected);
-    connect(m_features, &Rd::Application::FeatureModel::featureSelected, m_subtitles, &Rd::Ui::SubtitleModel::setSelected);
+    connect(m_ui, &Rd::Ui::Ui::fileIdentified, this, &Application::whatever);
 }
 
-Rd::Application::Application::~Application() {
-    ((QObject*)m_features)->deleteLater();
-    ((QObject*)m_fileSearch)->deleteLater();
-    ((QObject*)m_dropTarget)->deleteLater();
-    ((QObject*)m_selected)->deleteLater();
-    delete m_window;
-    delete m_engine;
+Rd::Application::Application::~Application() noexcept {
+    delete m_ui;
 }
 
-void Rd::Application::Application::start(const QRect& dimensions) {
-    m_engine->load(QUrl("qrc:/res/qml/main.qml"));
-    if (m_engine->rootObjects().isEmpty()) qFatal("Unable to parse QML file");
-    m_window = qobject_cast<QQuickWindow*>(m_engine->rootObjects().first());
-    if (!m_window) qFatal("No root window created");
+void  Rd::Application::Application::start() {
+    m_ui->show(m_dimensions);
+}
 
-    ((QWindow *)m_window)->setIcon(QIcon(":/res/images/desert-logo.svg"));
-    ((QWindow *)m_window)->setHeight(dimensions.height()/2);
-    ((QWindow *)m_window)->setWidth(dimensions.width()/2);
-    ((QWindow *)m_window)->show();
+void Rd::Application::Application::whatever(const QUrl& file, const Feature& feature) {
+    qDebug() << "Identified" << file << feature << Qt::endl;
 }

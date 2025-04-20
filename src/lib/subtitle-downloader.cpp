@@ -38,7 +38,23 @@ void Rd::Library::SubtitleDownloader::handleResponse(QNetworkReply* reply) {
     qDebug() << "Result" << result << Qt::endl;
 
     if (reply->error() != QNetworkReply::NoError) {
-        Q_EMIT error("Network error - " + ((QIODevice*)reply)->errorString() + QString(result).remove(QRegularExpression("<[^>]*>")).replace(QRegularExpression("[\\s\\n\\r]+"), " "));
+        Q_EMIT error("Network error - " + ((QIODevice*)reply)->errorString(), QString(result));
         return;
     }
+
+    QJsonParseError jsonError;
+    QJsonDocument doc = QJsonDocument::fromJson(result, &jsonError);
+    if (jsonError.error != QJsonParseError::NoError) {
+        Q_EMIT error("Error parsing download result", jsonError.errorString());
+        return;
+    }
+
+    QJsonObject obj = doc.object();
+    QUrl link = QUrl(obj[u"link"_qs].toString());
+    QString filename = obj[u"file_name"_qs].toString();
+    quint32 remaining = obj[u"remaining"_qs].toInt();
+    QString resetTime = obj[u"reset_time"_qs].toString();
+
+    Q_EMIT usage(remaining, resetTime);
+    Q_EMIT found(link, filename);
 }

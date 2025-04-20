@@ -3,6 +3,7 @@
 #include <QString>
 #include <QCommandLineParser>
 #include "types/subtitle-result.h"
+#include "ui/ui.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -16,12 +17,12 @@ int main(int argc, char *argv[]) {
     //DBus mode (start hidden, open window on dbus execusion then hide when clicked OK)
     //UI mode (start open, don't listen on dbus, default)
 
-    Rd::Application::Application application;
+    qRegisterMetaType<Subtitle>("Subtitle");
+    qRegisterMetaType<Feature>("Feature");
+    qmlRegisterUncreatableType<Rd::Ui::Ui>("com.realdesert", 1, 0, "Mode", "Not creatable as it is an enum type");
 
-    qRegisterMetaType<Subtitle>();
-    qRegisterMetaType<Feature>();
-
-    application.start(app.primaryScreen()->geometry());
+    Rd::Application::Application application(app.primaryScreen()->geometry());
+    application.start();
 
     return app.exec();
 }

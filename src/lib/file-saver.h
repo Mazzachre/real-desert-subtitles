@@ -6,17 +6,16 @@
 
 namespace Rd {
     namespace Library {
-        class SubtitleDownloader : public QObject {
+        class FileSaver : public QObject {
             Q_OBJECT
         public:
-            explicit SubtitleDownloader(QObject* parent = nullptr);
-            ~SubtitleDownloader() noexcept;
+            explicit FileSaver(QObject* parent = nullptr);
+            ~FileSaver() noexcept;
 
-            void download(quint64 fileId);
+            void download(const QUrl& url, const QUrl& path, const QString& filename);
 
             Q_SIGNAL void error(const QString& error, const QString& body) const;
-            Q_SIGNAL void usage(quint32 remaining, const QString& reset) const;
-            Q_SIGNAL void found(const QUrl& url, const QString& filename) const;
+            Q_SIGNAL void done();
         private:
             QNetworkAccessManager* m_networkAccess;
 
@@ -24,3 +23,4 @@ namespace Rd {
         };
     }
 }
+

@@ -1,6 +1,8 @@
 #include "subtitle-result.h"
 #include <QJsonArray>
 
+Subtitle::Subtitle() {}
+
 Subtitle::Subtitle(bool hearingImpaired, double fps, bool hashMatch, bool fpo, const QString& comments, const QJsonObject& item) {
     this->hearingImpaired = hearingImpaired;
     this->fps = fps;
@@ -9,6 +11,16 @@ Subtitle::Subtitle(bool hearingImpaired, double fps, bool hashMatch, bool fpo, c
     this->comments = comments;
     fileId = item.value(u"file_id"_qs).toInt();
     fileName = item.value(u"file_name"_qs).toString();
+}
+
+Subtitle::Subtitle(const Subtitle& other) {
+    hearingImpaired = other.hearingImpaired;
+    fps = other.fps;
+    hashMatch = other.hashMatch;
+    fpo = other.fpo;
+    comments = other.comments;
+    fileId = other.fileId;
+    fileName = other.fileName;
 }
 
 Subtitle& Subtitle::operator=(const Subtitle& other) {
@@ -22,13 +34,22 @@ Subtitle& Subtitle::operator=(const Subtitle& other) {
     return *this;
 }
 
+void Subtitle::clear() {
+    hearingImpaired = false;
+    fps = 0.0;
+    hashMatch = false;
+    fpo = false;
+    comments.clear();
+    fileId = 0;
+    fileName.clear();
+}
+
 QDebug operator <<(QDebug dbg, const Subtitle& subtitle) {
     dbg.nospace().noquote() << "Subtitle:(" << subtitle.fileName << " " <<  subtitle.hashMatch << ")";
     return dbg;
 }
 
 Feature::Feature() {}
-
 
 Feature::Feature(const QJsonObject& item) {
     QJsonObject attributes = item.value(u"attributes"_qs).toObject();
@@ -83,7 +104,7 @@ Feature& Feature::operator=(const Feature& other) {
     return *this;
 }
 
-QString Feature::display() const {
+QString Feature::titleDisplay() const {
     if (type == u"Movie"_qs) {
         return title;
     } else if (type == u"Episode"_qs) {
@@ -114,7 +135,9 @@ void Feature::clear() {
 }
 
 QDebug operator <<(QDebug dbg, const Feature& feature) {
-    if (feature.type ==u"Movie"_qs) {
+    if (feature.type.isEmpty()) {
+        dbg << "No feature";
+    } else if (feature.type ==u"Movie"_qs) {
         dbg.nospace().noquote() << "Movie:(\"" << feature.title << "\" <" << feature.subtitles.size() << ">)";
     } else if (feature.type == u"Episode"_qs) {
         dbg.nospace().noquote() << "Episode:(\"" << feature.parentTitle << " S" << feature.season << "E" << feature.episode << " " << feature.title << "\" <" << feature.subtitles.size() << ">)";

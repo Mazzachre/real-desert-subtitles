@@ -1,35 +1,184 @@
-import QtQuick
-import QtQuick.Controls
+import QtQuick 6.4
+import QtQuick.Controls 6.4
+import com.realdesert 1.0
 
 Window {
     id: "root"
 
     Rectangle {
-        id: "search"
+        id: "file"
         anchors {
             top: parent.top
             left: parent.left
             right: parent.right
             margins: 3
         }
-        height: 90
+        height: App.file.length != 0 ? 30 : 0
 
         Item {
-            visible: !(FileSearch.working || FeatureModel.results || SubtitleModel.results || SelectedFeature.result)
+            visible: App.file.length != 0
+            anchors.fill: parent
 
-            Text {
-                text: "Search for something?"
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                x: 5
+                width: 100
+                text: "Filename"
+            }
+
+            TextEdit {
+                anchors.verticalCenter: parent.verticalCenter
+                x: 110
+                width: parent.width - 210
+                text: App.file
+                readOnly: true
+                selectByMouse: true
+            }
+
+            Button {
+                anchors.verticalCenter: parent.verticalCenter
+                x: parent.width - 105
+                width: 90
+                text: 'Clear'
+                onClicked: {
+                    App.clear();
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: "search"
+        anchors {
+            top: file.bottom
+            left: parent.left
+            right: parent.right
+            margins: 3
+        }
+        height: App.mode == Mode.Retry || App.mode == Mode.Selecting || App.mode == Mode.Selected ? 95 : 0
+
+        Item {
+            visible: App.mode == Mode.Retry || App.mode == Mode.Selecting
+            anchors.fill: parent
+
+            Rectangle {
+                width: parent.width - 120
+                height: 30
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    width: 90
+                    text: "Type"
+                }
+
+                ComboBox {
+                    id: "searchType"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 100
+                    width: 120
+                    model: [ "Movie", "Show" ]
+                }
+            }
+
+            Rectangle {
+                width: parent.width - 120
+                height: 30
+                y: 30
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    width: 90
+                    text: "Title"
+                }
+
+                TextField {
+                    id: "searchTitle"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 100
+                    width: parent.width - 105
+                }
+            }
+
+            Rectangle {
+                width: parent.width - 120
+                height: 30
+                y: 60
+
+                Label {
+                    visible: searchType.currentValue == "Movie"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    width: 90
+                    text: "Year"
+                }
+
+                TextField {
+                    id: "searchYear"
+                    visible: searchType.currentValue == "Movie"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 100
+                    width: 80
+                }
+
+                Label {
+                    visible: searchType.currentValue == "Show"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    width: 90
+                    text: "Season"
+                }
+
+                TextField {
+                    id: "searchSeason"
+                    visible: searchType.currentValue == "Show"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 100
+                    width: 50
+                }
+
+                Label {
+                    visible: searchType.currentValue == "Show"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 190
+                    width: 60
+                    text: "Episode"
+                }
+
+                TextField {
+                    id: "searchEpisode"
+                    visible: searchType.currentValue == "Show"
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 250
+                    width: 50
+                }
+            }
+
+            Button {
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 5
+                x: parent.width - 105
+                width: 90
+                text: 'Search'
+                onClicked: {
+                    if (searchType.currentValue == "Movie") {
+                        //TODO validate?
+                        App.searchMovie(searchTitle.text, searchYear.text);
+                    }
+                    if (searchType.currentValue == "Show") {
+                        //TODO validate?
+                        App.searchMovie(searchTitle.text, searchSeason.text, searchEpisode.text);
+                    }
+                }
             }
         }
 
         Item {
-            visible: SelectedFeature.result
+           visible: App.mode == Mode.Selected
+            anchors.fill: parent
 
             Column {
-                Text {
-                    text: SelectedFeature.filename
-                }
-
                 Text {
                     text: SelectedFeature.title
                 }
@@ -60,7 +209,7 @@ Window {
         radius: 5
 
         Item {
-            visible: !(FileSearch.working || FeatureModel.results || SubtitleModel.results)
+            visible: App.mode == Mode.Search
             anchors.fill: parent
 
             Text {
@@ -82,17 +231,27 @@ Window {
         }
 
         Item {
-            visible: FileSearch.working
+            visible: App.mode == Mode.Working
             anchors.fill: parent
 
             Text {
                 anchors.centerIn: parent
-                text: FileSearch.file
+                text: "Working..."
             }
         }
 
         Item {
-            visible: FeatureModel.results
+            visible: App.mode == Mode.Retry
+            anchors.fill: parent
+
+            Text {
+                anchors.centerIn: parent
+                text: "No results for search..."
+            }
+        }
+
+        Item {
+            visible: App.mode == Mode.Selecting
             anchors.fill: parent
 
             ListView {
@@ -121,7 +280,7 @@ Window {
                         anchors.fill: parent
                         enabled: true
                         hoverEnabled: true
-                        onClicked: FeatureModel.selectFeature(id);
+                        onClicked: App.selectFeature(id);
                     }
 
                     Row {
@@ -136,7 +295,7 @@ Window {
                                 anchors.fill: parent
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
-                                text: id
+                                text: imdb
                             }
                         }
 
@@ -167,7 +326,7 @@ Window {
         }
 
         Item {
-            visible: SubtitleModel.results
+            visible: App.mode == Mode.Selected
             anchors.fill: parent
 
             ListView {
@@ -196,7 +355,7 @@ Window {
                         anchors.fill: parent
                         enabled: true
                         hoverEnabled: true
-                        onClicked: SubtitleModel.download(id)
+                        onClicked: App.selectSubtitle(id)
                     }
 
                     Row {
@@ -272,6 +431,7 @@ Window {
                                     hoverEnabled: true
                                     onEntered: function() {
                                         commentsPopup.x = hasCommentsIcon.x - commentsPopup.width
+                                        commentsPopup.width = Math.min(commentsPopup.width, 625)
                                         commentsPopup.open()
                                     }
                                     onExited: function() {
@@ -284,8 +444,9 @@ Window {
                         Popup {
                             id: "commentsPopup"
 
-                            Text {
+                            contentItem: Text {
                                 text: comments
+                                wrapMode: Text.Wrap
                             }
                         }
                     }
@@ -302,20 +463,7 @@ Window {
             right: parent.right
             margins: 3
         }
-        height: 60
-        color: "red"
-        radius: 5
-
-        Button {
-            anchors.centerIn: parent
-            text: 'Clear'
-            onClicked: {
-                FeatureModel.clear();
-                FileSearch.clear();
-                SelectedFeature.clear();
-                SubtitleModel.clear();
-            }
-        }
+        height: 10
     }
 
     Dialog {
@@ -333,14 +481,6 @@ Window {
             height: parent.height -20
             wrapMode: Text.Wrap
             text: ""
-        }
-    }
-
-    Connections {
-        target: FileSearch
-        function onError(error) {
-            errorText.text = error;
-            errorDialog.open();
         }
     }
 }
