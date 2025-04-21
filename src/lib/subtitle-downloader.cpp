@@ -57,4 +57,6 @@ void Rd::Library::SubtitleDownloader::handleResponse(QNetworkReply* reply) {
 
     Q_EMIT usage(remaining, resetTime);
     Q_EMIT found(link, filename);
+
+    ((QObject *) reply)->deleteLater();
 }

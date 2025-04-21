@@ -40,6 +40,7 @@ Window {
                 x: parent.width - 105
                 width: 90
                 text: 'Clear'
+                enabled: App.mode != Mode.Working
                 onClicked: {
                     App.clear();
                 }
@@ -163,11 +164,9 @@ Window {
                 text: 'Search'
                 onClicked: {
                     if (searchType.currentValue == "Movie") {
-                        //TODO validate?
                         App.searchMovie(searchTitle.text, searchYear.text);
                     }
                     if (searchType.currentValue == "Show") {
-                        //TODO validate?
                         App.searchMovie(searchTitle.text, searchSeason.text, searchEpisode.text);
                     }
                 }
@@ -237,6 +236,80 @@ Window {
             Text {
                 anchors.centerIn: parent
                 text: "Working..."
+            }
+        }
+
+        Item {
+            visible: App.mode == Mode.Done
+            anchors.fill: parent
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width - 10
+                height: 120
+
+                border {
+                    width: 1
+                    color: "grey"
+                }
+                radius: 5
+
+                Item {
+                    width: parent.width
+                    height: 25
+                    y: 10
+
+                    Text {
+                        width: (parent.width / 2) - 10
+                        horizontalAlignment: Text.AlignRight
+                        text: "Remaining downloads"
+                    }
+
+                    Text {
+                        width: parent.width / 2
+                        x: parent.width / 2
+                        text: App.remaining
+                    }
+                }
+
+                Item {
+                    width: parent.width
+                    height: 25
+                    y: 35
+
+                    Text {
+                        width: (parent.width / 2) - 10
+                        horizontalAlignment: Text.AlignRight
+                        text: "Resets  in"
+                    }
+
+                    Text {
+                        width: parent.width / 2
+                        x: parent.width / 2
+                        text: App.reset
+                    }
+                }
+
+                Item {
+                    width: parent.width
+                    height: 30
+                    y: 60
+
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: App.target
+                    }
+                }
+
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: 90
+
+                    text: "Done"
+                    onClicked: {
+                        App.clear();
+                    }
+                }
             }
         }
 
@@ -475,12 +548,26 @@ Window {
         standardButtons: Dialog.Ok
         title: "Error"
 
+        //TODO Put this in a read box?
         Text {
             id: "errorText"
             width: parent.width - 20
             height: parent.height -20
             wrapMode: Text.Wrap
             text: ""
+        }
+
+        onAccepted: {
+            App.clear();
+        }
+    }
+
+    Connections {
+        target: App
+        onError: function(head, body) {
+            errorDialog.title = head;
+            errorText.text = body;
+            errorDialog.open();
         }
     }
 }

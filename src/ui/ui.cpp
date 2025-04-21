@@ -1,5 +1,6 @@
 #include "ui.h"
 #include <QQmlContext>
+#include <QFileInfo>
 
 Rd::Ui::Ui::Ui(QObject* parent)
 : QObject(parent)
@@ -10,7 +11,8 @@ Rd::Ui::Ui::Ui(QObject* parent)
 , m_target{new DropTarget}
 , m_selected{new SelectedFeature}
 , m_search{new Rd::Library::SubtitleFinder}
-, m_download{new Rd::Library::SubtitleDownloader} {
+, m_download{new Rd::Library::SubtitleDownloader}
+, m_saver{new Rd::Library::FileSaver} {
 
     QQmlContext* context = ((QQmlEngine *)m_engine)->rootContext();
     context->setContextProperty("DropTarget", m_target);
@@ -34,6 +36,11 @@ Rd::Ui::Ui::Ui(QObject* parent)
     connect(m_search, &Rd::Library::SubtitleFinder::noSubtitlesFound, this, &Ui::noSubtitlesFound);
     connect(m_search, &Rd::Library::SubtitleFinder::error, this, &Ui::handleError);
 
+    connect(m_download, &Rd::Library::SubtitleDownloader::found, this, &Ui::subtitleFile);
+    connect(m_download, &Rd::Library::SubtitleDownloader::usage, this, &Ui::handleUsageReport);
+    connect(m_download, &Rd::Library::SubtitleDownloader::error, this, &Ui::handleError);
+
+    connect(m_saver, &Rd::Library::FileSaver::done, this, &Ui::done);
 }
 
 Rd::Ui::Ui::~Ui() noexcept {
@@ -43,6 +50,7 @@ Rd::Ui::Ui::~Ui() noexcept {
     ((QObject*)m_target)->deleteLater();
     ((QObject*)m_search)->deleteLater();
     ((QObject*)m_download)->deleteLater();
+    ((QObject*)m_saver)->deleteLater();
     delete m_window;
     delete m_engine;
 }
@@ -55,13 +63,23 @@ QString Rd::Ui::Ui::file() {
     return m_file.fileName();
 }
 
+quint32 Rd::Ui::Ui::remaining() {
+    return m_remaining;
+}
+
+QString Rd::Ui::Ui::reset() {
+    return m_reset;
+}
+
+QString Rd::Ui::Ui::target() {
+    return m_targetFile;
+}
+
 void Rd::Ui::Ui::searchMovie(const QString& title, const QString& year) {
-    //TODO validate?
     m_search->findMovie(title, year);
 }
 
 void Rd::Ui::Ui::searchShow(const QString& title, const QString& season, const QString& episode) {
-    //TODO validate?
     m_search->findShow(title, season, episode);
 }
 
@@ -71,7 +89,6 @@ void Rd::Ui::Ui::selectFeature(quint64 id) {
 
     m_subtitles->setSubtitles(feature.subtitles);
     m_selected->setSelected(feature);
-    m_features->clear();
 
     m_mode = Selected;
     Q_EMIT modeUpdated();
@@ -82,6 +99,13 @@ void Rd::Ui::Ui::selectSubtitle(quint64 id) {
 }
 
 void Rd::Ui::Ui::clear() {
+    m_remaining = 0;
+    m_reset.clear();
+    Q_EMIT usageUpdated();
+
+    m_targetFile.clear();
+    Q_EMIT targetUpdated();
+
     m_file.clear();
     Q_EMIT fileUpdated();
 
@@ -113,8 +137,19 @@ void Rd::Ui::Ui::fileSelected(const QUrl& file) {
     Q_EMIT modeUpdated();
 }
 
-void Rd::Ui::Ui::subtitlesFound(const QList<Feature>&) {
-    m_mode = Selecting;
+void Rd::Ui::Ui::subtitlesFound(const QList<Feature>& features) {
+    if (features.size() == 1) {
+        const Feature& feature = features[0];
+        Q_EMIT fileIdentified(m_file, feature);
+
+        m_subtitles->setSubtitles(feature.subtitles);
+        m_selected->setSelected(feature);
+
+        m_mode = Selected;
+    } else {
+        m_mode = Selecting;
+    }
+
     Q_EMIT modeUpdated();
 }
 
@@ -123,7 +158,27 @@ void Rd::Ui::Ui::noSubtitlesFound() {
     Q_EMIT modeUpdated();
 }
 
+void Rd::Ui::Ui::subtitleFile(const QUrl& url, const QString& filename) {
+    QFileInfo fi = QFileInfo(m_file.toLocalFile());
+    m_saver->download(url, fi.absolutePath(), filename);
+    m_mode = Working;
+    Q_EMIT modeUpdated();
+    m_targetFile = filename;
+    Q_EMIT targetUpdated();
+}
+
+void Rd::Ui::Ui::handleUsageReport(quint32 remaining, const QString& reset) {
+    m_remaining = remaining;
+    m_reset = reset;
+    Q_EMIT usageUpdated();
+}
+
+void Rd::Ui::Ui::done() {
+    m_mode = Done;
+    Q_EMIT modeUpdated();
+}
+
+
 void Rd::Ui::Ui::handleError(const QString& head, const QString& body) {
-    //TODO ERROR
-    qDebug() << head << body << Qt::endl;
+    Q_EMIT error(head, body);
 }
