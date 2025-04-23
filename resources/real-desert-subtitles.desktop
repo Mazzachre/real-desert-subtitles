@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Real Desert Subtitles
+Comment=Download subtitles easily
+Exec=real-desert-subtitles
+Icon=real-desert-subtitles
+Terminal=false
+Type=Application
+Categories=AudioVideo;Utility;

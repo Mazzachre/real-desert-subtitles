@@ -174,20 +174,59 @@ Window {
         }
 
         Item {
-           visible: App.mode == Mode.Selected
+            visible: App.mode == Mode.Selected
             anchors.fill: parent
 
-            Column {
+            Rectangle {
+                height: 30
+                width: parent.width
+
                 Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    text: "Imdb ID"
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 110
+                    text: SelectedFeature.imdb
+                }
+            }
+
+            Rectangle {
+                height: 30
+                width: parent.width
+                y: 30
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    text: "Title"
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 110
                     text: SelectedFeature.title
                 }
+            }
+
+            Rectangle {
+                height: 30
+                width: parent.width
+                y: 60
 
                 Text {
-                    text: SelectedFeature.year
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    text: "Year"
                 }
 
                 Text {
-                    text: SelectedFeature.imdb
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: 110
+                    text: SelectedFeature.year
                 }
             }
         }
@@ -564,7 +603,7 @@ Window {
 
     Connections {
         target: App
-        onError: function(head, body) {
+        function onError(head, body) {
             errorDialog.title = head;
             errorText.text = body;
             errorDialog.open();

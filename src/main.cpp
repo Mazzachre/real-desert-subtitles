@@ -12,17 +12,20 @@ int main(int argc, char *argv[]) {
     app.setOrganizationDomain(u"realdesert.com"_qs);
     app.setOrganizationName(u"Real Desert Productions"_qs);
 
-//    QCommandLineParser parser;
-    //2 modes as I see it?
-    //DBus mode (start hidden, open window on dbus execusion then hide when clicked OK)
-    //UI mode (start open, don't listen on dbus, default)
+    QCommandLineParser parser;
+    parser.addOptions({
+        {{"d", "dbus"}, "Start in DBus mode"}
+    });
+    parser.parse(app.arguments());
 
     qRegisterMetaType<Subtitle>("Subtitle");
     qRegisterMetaType<Feature>("Feature");
     qmlRegisterUncreatableType<Rd::Ui::Ui>("com.realdesert", 1, 0, "Mode", "Not creatable as it is an enum type");
 
     Rd::Application::Application application(app.primaryScreen()->geometry());
-    application.start();
+    if (!parser.isSet("d")) {
+        application.start();
+    }
 
     return app.exec();
 }

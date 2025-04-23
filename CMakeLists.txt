@@ -5,13 +5,13 @@ project(real-desert-subtitles VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Qml Quick)
-find_package(QuaZip-Qt6 REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Qml Quick DBus)
 qt_standard_project_setup()
 
 qt_add_executable(real-desert-subtitles
     src/main.cpp
     src/app/application.cpp
+    src/dbus/subtitles-adapter.cpp
     src/lib/file-hash.cpp
     src/lib/file-saver.cpp
     src/lib/subtitle-finder.cpp
@@ -44,5 +44,35 @@ target_link_libraries(real-desert-subtitles
     Qt6::Network
     Qt6::Qml
     Qt6::Quick
-    QuaZip::QuaZip
+    Qt6::DBus
 )
+
+include(InstallRequiredSystemLibraries)
+
+# Install rules
+install(TARGETS real-desert-subtitles
+    DESTINATION bin
+)
+
+include(GNUInstallDirs)
+
+install(FILES resources/real-desert-subtitles.desktop
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+)
+
+install(FILES images/desert-logo.svg
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps
+    RENAME real-desert-subtitles.svg
+)
+
+# Package metadata
+set(CPACK_PACKAGE_NAME "real-desert-subtitles")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_CONTACT "Tanya Randstoft <tanya@randstoft.dk>")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tanya Randstoft")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+set(CPACK_SYSTEM_NAME "amd64")
+set(CPACK_GENERATOR "DEB")
+
+include(CPack)

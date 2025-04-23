@@ -1,13 +1,16 @@
 #include "application.h"
-// #include "../types/subtitle-result.h"
-// #include "../types/ui-mode.h"
+#include <QDBusConnection>
 
 Rd::Application::Application::Application(const QRect& dimensions, QObject* parent)
 : QObject(parent)
 , m_ui{new Rd::Ui::Ui} {
     m_dimensions = dimensions;
+    m_dbus = new SubtitlesAdaptor(this);
 
-    connect(m_ui, &Rd::Ui::Ui::fileIdentified, this, &Application::whatever);
+    QDBusConnection::sessionBus().registerObject("/Subtitles", this);
+    QDBusConnection::sessionBus().registerService("com.realdesert.Subtitles");
+
+    connect(m_ui, &Rd::Ui::Ui::fileIdentified, m_dbus, &SubtitlesAdaptor::fileIdentified);
 }
 
 Rd::Application::Application::~Application() noexcept {
@@ -18,6 +21,7 @@ void  Rd::Application::Application::start() {
     m_ui->show(m_dimensions);
 }
 
-void Rd::Application::Application::whatever(const QUrl& file, const Feature& feature) {
-    qDebug() << "Identified" << file << feature << Qt::endl;
+void Rd::Application::Application::findFile(const QUrl& file) {
+    m_ui->show(m_dimensions);
+    m_ui->fileSelected(file);
 }

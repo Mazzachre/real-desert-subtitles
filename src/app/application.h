@@ -3,7 +3,8 @@
 #include <QObject>
 #include <QApplication>
 #include "../ui/ui.h"
-#include "../lib/subtitle-finder.h"
+#include "../types/subtitle-result.h"
+#include "../dbus/subtitles-adapter.h"
 
 namespace Rd {
     namespace Application {
@@ -17,8 +18,9 @@ namespace Rd {
         private:
             QRect m_dimensions;
             Rd::Ui::Ui* m_ui;
+            SubtitlesAdaptor* m_dbus;
 
-            Q_SLOT void whatever(const QUrl& file, const Feature& feature);
+            Q_INVOKABLE void findFile(const QUrl& file);
         };
     }
 }

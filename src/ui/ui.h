@@ -57,6 +57,7 @@ namespace Rd {
             Q_SIGNAL void error(const QString& head, const QString& body);
 
             //Main app control
+            Q_SLOT void fileSelected(const QUrl& file);
             Q_SIGNAL void fileIdentified(const QUrl& file, const Feature& feature);
             Q_SLOT void show(const QRect& dimensions);
             Q_SLOT void hide();
@@ -82,7 +83,6 @@ namespace Rd {
             Rd::Library::SubtitleDownloader* m_download;
             Rd::Library::FileSaver* m_saver;
 
-            Q_SLOT void fileSelected(const QUrl& file);
             Q_SLOT void subtitlesFound(const QList<Feature>& results);
             Q_SLOT void noSubtitlesFound();
             Q_SLOT void subtitleFile(const QUrl& url, const QString& filename);

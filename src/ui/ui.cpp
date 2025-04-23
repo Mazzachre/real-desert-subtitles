@@ -28,7 +28,7 @@ Rd::Ui::Ui::Ui(QObject* parent)
 
     ((QWindow *)m_window)->setIcon(QIcon(":/res/images/desert-logo.svg"));
 
-    connect(m_target, &DropTarget::fileDropped, m_search, &Rd::Library::SubtitleFinder::findByFile);
+//    connect(m_target, &DropTarget::fileDropped, m_search, &Rd::Library::SubtitleFinder::findByFile);
     connect(m_target, &DropTarget::fileDropped, this, &Ui::fileSelected);
 
     connect(m_search, &Rd::Library::SubtitleFinder::subtitlesFound, m_features, &FeatureModel::setFeatures);
@@ -135,6 +135,8 @@ void Rd::Ui::Ui::fileSelected(const QUrl& file) {
 
     m_mode = Working;
     Q_EMIT modeUpdated();
+
+    m_search->findByFile(file);
 }
 
 void Rd::Ui::Ui::subtitlesFound(const QList<Feature>& features) {
