@@ -1,9 +1,10 @@
 #include "application.h"
 #include <QDBusConnection>
 
-Rd::Application::Application::Application(const QRect& dimensions, QObject* parent)
+Rd::Application::Application::Application(const QRect& dimensions, bool dbusMode, QObject* parent)
 : QObject(parent)
 , m_ui{new Rd::Ui::Ui} {
+    m_dbusMode = dbusMode;
     m_dimensions = dimensions;
     m_dbus = new SubtitlesAdaptor(this);
 
@@ -11,6 +12,7 @@ Rd::Application::Application::Application(const QRect& dimensions, QObject* pare
     QDBusConnection::sessionBus().registerService("com.realdesert.Subtitles");
 
     connect(m_ui, &Rd::Ui::Ui::fileIdentified, m_dbus, &SubtitlesAdaptor::fileIdentified);
+    connect(m_ui, &Rd::Ui::Ui::finished, this, &Application::finished);
 }
 
 Rd::Application::Application::~Application() noexcept {
@@ -18,10 +20,19 @@ Rd::Application::Application::~Application() noexcept {
 }
 
 void  Rd::Application::Application::start() {
-    m_ui->show(m_dimensions);
+    if (!m_dbusMode) {
+        m_ui->show(m_dimensions);
+    }
 }
 
 void Rd::Application::Application::findFile(const QUrl& file) {
     m_ui->show(m_dimensions);
     m_ui->fileSelected(file);
+}
+
+void Rd::Application::Application::finished() {
+    m_ui->clear();
+    if (m_dbusMode) {
+        m_ui->hide();
+    }
 }

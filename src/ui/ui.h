@@ -54,6 +54,9 @@ namespace Rd {
             Q_SLOT void selectSubtitle(quint64 id);
             Q_SLOT void clear();
 
+            Q_SLOT void stay();
+            Q_SLOT void finish();
+
             Q_SIGNAL void error(const QString& head, const QString& body);
 
             //Main app control
@@ -61,6 +64,7 @@ namespace Rd {
             Q_SIGNAL void fileIdentified(const QUrl& file, const Feature& feature);
             Q_SLOT void show(const QRect& dimensions);
             Q_SLOT void hide();
+            Q_SIGNAL void finished();
         private:
             Mode m_mode = Mode::Search;
             QUrl m_file;

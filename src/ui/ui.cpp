@@ -117,6 +117,19 @@ void Rd::Ui::Ui::clear() {
     Q_EMIT modeUpdated();
 }
 
+void Rd::Ui::Ui::stay() {
+    m_remaining = 0;
+    m_reset.clear();
+    Q_EMIT usageUpdated();
+
+    m_mode = Selected;
+    Q_EMIT modeUpdated();
+}
+
+void Rd::Ui::Ui::finish() {
+    Q_EMIT finished();
+}
+
 void Rd::Ui::Ui::show(const QRect& dimensions) {
     ((QWindow *)m_window)->setHeight(dimensions.height()/2);
     ((QWindow *)m_window)->setWidth(dimensions.width()/2);
@@ -179,7 +192,6 @@ void Rd::Ui::Ui::done() {
     m_mode = Done;
     Q_EMIT modeUpdated();
 }
-
 
 void Rd::Ui::Ui::handleError(const QString& head, const QString& body) {
     Q_EMIT error(head, body);

@@ -340,13 +340,26 @@ Window {
                     }
                 }
 
-                Button {
+                Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: 90
+                    width: 200
 
-                    text: "Done"
-                    onClicked: {
-                        App.clear();
+                    Button {
+                        width: 90
+                        text: "Clear"
+                        onClicked: {
+                            App.finish();
+                        }
+                    }
+
+                    Button {
+                        width: 90
+                        text: "Stay"
+                        x: 110
+                        onClicked: {
+                            App.stay();
+                        }
                     }
                 }
             }
