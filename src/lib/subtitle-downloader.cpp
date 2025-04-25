@@ -1,23 +1,30 @@
 #include "subtitle-downloader.h"
 #include "../../key.h"
-#include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
 
 Rd::Library::SubtitleDownloader::SubtitleDownloader(QObject* parent)
 : QObject(parent)
-, m_networkAccess{new QNetworkAccessManager} {
-    connect(m_networkAccess, &QNetworkAccessManager::finished, this, &Rd::Library::SubtitleDownloader::handleResponse);
+, m_networkAccess{new QNetworkAccessManager}
+, m_authentication{new Authentication} {
+    connect(m_networkAccess, &QNetworkAccessManager::finished, this, &SubtitleDownloader::handleResponse);
+    connect(m_authentication, &Authentication::authenticated, this, &SubtitleDownloader::handleAuthenticated);
 }
 
-Rd::Library::SubtitleDownloader::~SubtitleDownloader() {
+Rd::Library::SubtitleDownloader::~SubtitleDownloader() noexcept {
+    delete m_authentication;
     delete m_networkAccess;
 }
 
 void Rd::Library::SubtitleDownloader::download(quint64 fileId) {
+    m_fileId = fileId;
+    m_authentication->authenticate();
+}
+
+void Rd::Library::SubtitleDownloader::handleAuthenticated(const QString& token) {
     QJsonObject obj
     {
-        {"file_id", QJsonValue(static_cast<qint64>(fileId))}
+        {"file_id", QJsonValue(static_cast<qint64>(m_fileId))}
     };
 
     QJsonDocument doc;
@@ -26,6 +33,10 @@ void Rd::Library::SubtitleDownloader::download(quint64 fileId) {
     QNetworkRequest req(QUrl(u"https://api.opensubtitles.com/api/v1/download"_qs));
 
     req.setRawHeader(QByteArrayLiteral("Api-Key"), QByteArrayLiteral(API_KEY));
+    if (!token.isEmpty()) {
+        QString bearer = u"Bearer "_qs+token;
+        req.setRawHeader(QByteArrayLiteral("Authorization"), bearer.toUtf8());
+    }
     req.setHeader(QNetworkRequest::UserAgentHeader, "ReadDesertSubtitles 1.0");
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     req.setRawHeader(QByteArrayLiteral("Accept"), QByteArrayLiteral("application/json"));

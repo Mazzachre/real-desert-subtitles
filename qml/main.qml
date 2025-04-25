@@ -5,10 +5,52 @@ import com.realdesert 1.0
 Window {
     id: "root"
 
+    ToolBar {
+        id: "tool"
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: 30
+
+        ToolButton {
+            width: 30
+            height: 30
+            x: parent.width - 35
+
+            icon {
+                height: 28
+                width: 28
+                source: "qrc:/res/images/user.svg"
+            }
+
+            onClicked: {
+                userDialog.open();
+            }
+        }
+
+        ToolButton {
+            width: 30
+            height: 30
+            x: parent.width - 65
+
+            icon {
+                height: 28
+                width: 28
+                source: "qrc:/res/images/config.svg"
+            }
+
+            onClicked: {
+                configDialog.open();
+            }
+        }
+    }
+
     Rectangle {
         id: "file"
         anchors {
-            top: parent.top
+            top: tool.bottom
             left: parent.left
             right: parent.right
             margins: 3
@@ -592,6 +634,83 @@ Window {
     }
 
     Dialog {
+        id: "configDialog"
+        modal: true
+        anchors.centerIn: parent
+        width: parent.width - 10
+        height: parent.height - 10
+        standardButtons: Dialog.Save | Dialog.Cancel
+        title: "Configuration"
+
+        Grid {
+            columns: 2
+            spacing: 5
+
+            Text {
+                text: "Subtitle Languages"
+            }
+
+            TextField {
+                id: "languages"
+                text: Config.languages
+            }
+
+            Text {
+                text: "Include foreign part only"
+            }
+
+            CheckBox {
+                id: "fpo"
+                checked: Config.fpo
+            }
+        }
+
+        onAccepted: {
+            Config.saveConfig(languages.text, fpo.checked);
+        }
+    }
+
+    Dialog {
+        id: "userDialog"
+        modal: true
+        anchors.centerIn: parent
+        width: parent.width - 10
+        height: parent.height - 10
+        standardButtons: Dialog.Save | Dialog.Cancel
+        title: "User"
+
+        Grid {
+            columns: 2
+            spacing: 5
+
+            Text {
+                text: "Username"
+            }
+
+            TextField {
+                id: "username"
+                text: Config.username
+                width: 400
+            }
+
+            Text {
+                text: "Password"
+            }
+
+            TextField {
+                id: "password"
+                echoMode: TextInput.Password
+                text: Config.password
+                width: 400
+            }
+        }
+
+        onAccepted: {
+            Config.saveAuth(username.text, password.text);
+        }
+    }
+
+    Dialog {
         id: "errorDialog"
         modal: true
         anchors.centerIn: parent
@@ -600,7 +719,6 @@ Window {
         standardButtons: Dialog.Ok
         title: "Error"
 
-        //TODO Put this in a read box?
         Text {
             id: "errorText"
             width: parent.width - 20

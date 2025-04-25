@@ -9,7 +9,7 @@ Rd::Application::Application::Application(const QRect& dimensions, bool dbusMode
     m_dbus = new SubtitlesAdaptor(this);
 
     QDBusConnection::sessionBus().registerObject("/Subtitles", this);
-    QDBusConnection::sessionBus().registerService("com.realdesert.Subtitles");
+    QDBusConnection::sessionBus().registerService("com.realdesert.Media");
 
     connect(m_ui, &Rd::Ui::Ui::fileIdentified, m_dbus, &SubtitlesAdaptor::fileIdentified);
     connect(m_ui, &Rd::Ui::Ui::finished, this, &Application::finished);

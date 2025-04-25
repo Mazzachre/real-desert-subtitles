@@ -10,6 +10,7 @@ Rd::Ui::Ui::Ui(QObject* parent)
 , m_subtitles{new SubtitleModel}
 , m_target{new DropTarget}
 , m_selected{new SelectedFeature}
+, m_config{new Config}
 , m_search{new Rd::Library::SubtitleFinder}
 , m_download{new Rd::Library::SubtitleDownloader}
 , m_saver{new Rd::Library::FileSaver} {
@@ -19,6 +20,7 @@ Rd::Ui::Ui::Ui(QObject* parent)
     context->setContextProperty("FeatureModel", m_features);
     context->setContextProperty("SubtitleModel", m_subtitles);
     context->setContextProperty("SelectedFeature", m_selected);
+    context->setContextProperty("Config", m_config);
     context->setContextProperty("App", this);
 
     m_engine->load(QUrl("qrc:/res/qml/main.qml"));
@@ -45,6 +47,7 @@ Rd::Ui::Ui::Ui(QObject* parent)
 
 Rd::Ui::Ui::~Ui() noexcept {
     ((QObject*)m_selected)->deleteLater();
+    ((QObject*)m_config)->deleteLater();
     ((QObject*)m_features)->deleteLater();
     ((QObject*)m_subtitles)->deleteLater();
     ((QObject*)m_target)->deleteLater();

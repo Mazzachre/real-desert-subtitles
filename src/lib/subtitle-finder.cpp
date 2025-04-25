@@ -25,7 +25,7 @@ void Rd::Library::SubtitleFinder::findByFile(const QUrl& file) {
     QString hash = m_fileHash->computeHash(file);
     QSettings settings;
     QString fpo = settings.value(u"fpo"_qs, false).toBool() ? u"include"_qs : u"exclude"_qs;
-    QString lang = settings.value(u"language"_qs, "en").toString();
+    QString lang = settings.value(u"languages"_qs, "en").toString();
 
     QUrlQuery query;
     query.addQueryItem(u"ai_translated"_qs, u"exclude"_qs);
@@ -47,7 +47,7 @@ void Rd::Library::SubtitleFinder::findByFile(const QUrl& file) {
 void Rd::Library::SubtitleFinder::findMovie(const QString& title, const QString& year) {
     QSettings settings;
     QString fpo = settings.value(u"fpo"_qs, false).toBool() ? u"include"_qs : u"exclude"_qs;
-    QString lang = settings.value(u"language"_qs, "en").toString();
+    QString lang = settings.value(u"languages"_qs, "en").toString();
 
     QUrlQuery query;
     query.addQueryItem(u"ai_translated"_qs, u"exclude"_qs);
@@ -70,7 +70,7 @@ void Rd::Library::SubtitleFinder::findMovie(const QString& title, const QString&
 void Rd::Library::SubtitleFinder::findShow(const QString& title, const QString& season, const QString& episode) {
     QSettings settings;
     QString fpo = settings.value(u"fpo"_qs, false).toBool() ? u"include"_qs : u"exclude"_qs;
-    QString lang = settings.value(u"language"_qs, "en").toString();
+    QString lang = settings.value(u"languages"_qs, "en").toString();
 
     QUrlQuery query;
     query.addQueryItem(u"ai_translated"_qs, u"exclude"_qs);

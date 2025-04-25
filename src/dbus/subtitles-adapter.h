@@ -6,14 +6,14 @@
 #include "../types/subtitle-result.h"
 
 /*
- * Adaptor class for interface com.realdesert.Subtitles
+ * Adaptor class for interface com.realdesert.Media
  */
 class SubtitlesAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.realdesert.Subtitles")
+    Q_CLASSINFO("D-Bus Interface", "com.realdesert.Media")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"com.realdesert.Subtitles\">\n"
+"  <interface name=\"com.realdesert.Media\">\n"
 "    <method name=\"FindFor\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"url\"/>\n"
 "    </method>\n"

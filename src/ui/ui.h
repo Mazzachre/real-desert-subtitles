@@ -6,6 +6,7 @@
 #include "subtitle-model.h"
 #include "drop-target.h"
 #include "selected-feature.h"
+#include "config.h"
 #include "../lib/subtitle-finder.h"
 #include "../lib/subtitle-downloader.h"
 #include "../lib/file-saver.h"
@@ -81,6 +82,7 @@ namespace Rd {
             SubtitleModel* m_subtitles;
             DropTarget* m_target;
             SelectedFeature* m_selected;
+            Config* m_config;
 
             //Library functions
             Rd::Library::SubtitleFinder* m_search;

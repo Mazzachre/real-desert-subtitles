@@ -12,12 +12,14 @@ qt_add_executable(real-desert-subtitles
     src/main.cpp
     src/app/application.cpp
     src/dbus/subtitles-adapter.cpp
+    src/lib/authentication.cpp
     src/lib/file-hash.cpp
     src/lib/file-saver.cpp
     src/lib/subtitle-finder.cpp
     src/lib/subtitle-downloader.cpp
     src/types/subtitle-result.cpp
     src/ui/ui.cpp
+    src/ui/config.cpp
     src/ui/drop-target.cpp
     src/ui/feature-model.cpp
     src/ui/subtitle-model.cpp
@@ -35,6 +37,8 @@ qt_add_qml_module(real-desert-subtitles
         images/hash.svg
         images/hearing-impaired.svg
         images/comment.svg
+        images/config.svg
+        images/user.svg
 )
 
 target_link_libraries(real-desert-subtitles
@@ -71,6 +75,9 @@ set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_CONTACT "Tanya Randstoft <tanya@randstoft.dk>")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tanya Randstoft")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS
+    "qml6-module-qtquick-controls, libqt6qml6 (>= 6.4), libqt6quick6 (>= 6.4), libqt6core6t64 (>= 6.4), libqt6gui6t64 (>= 6.4), libqt6widgets6t64 (>= 6.4)"
+)
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set(CPACK_SYSTEM_NAME "amd64")
 set(CPACK_GENERATOR "DEB")
