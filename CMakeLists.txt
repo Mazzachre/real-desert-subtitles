@@ -76,7 +76,9 @@ set(CPACK_PACKAGE_CONTACT "Tanya Randstoft <tanya@randstoft.dk>")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tanya Randstoft")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "qml6-module-qtquick-controls, libqt6qml6 (>= 6.4), libqt6quick6 (>= 6.4), libqt6core6t64 (>= 6.4), libqt6gui6t64 (>= 6.4), libqt6widgets6t64 (>= 6.4)"
+    "qml6-module-qtqml, qml6-module-qtqml-workerscript, qml6-module-qtquick, qml6-module-qtquick-controls,
+     libqt6core6t64 (>= 6.4), libqt6gui6t64 (>= 6.4), libqt6widgets6t64 (>= 6.4),
+     libqt6network6t64 (>= 6.4), libqt6qml6 (>= 6.4), libqt6quick6 (>= 6.4), libqt6dbus6 (>= 6.4), qml6-module-qtquick-templates (>= 6.4), qml6-module-qtquick-window (>= 6.4), libqt6svg6 (>= 6.4)"
 )
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set(CPACK_SYSTEM_NAME "amd64")
