@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(real-desert-subtitles VERSION 1.0.0 LANGUAGES CXX)
+project(real-desert-subtitles VERSION 1.0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -71,7 +71,7 @@ install(FILES images/desert-logo.svg
 
 # Package metadata
 set(CPACK_PACKAGE_NAME "real-desert-subtitles")
-set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_VERSION "1.0.1")
 set(CPACK_PACKAGE_CONTACT "Tanya Randstoft <tanya@randstoft.dk>")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tanya Randstoft")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)

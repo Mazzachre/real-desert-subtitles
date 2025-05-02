@@ -1,4 +1,5 @@
 #include "subtitle-model.h"
+#include <algorithm>
 
 Rd::Ui::SubtitleModel::SubtitleModel(QObject* parent)
 : QAbstractListModel(parent) {
@@ -10,6 +11,7 @@ Rd::Ui::SubtitleModel::~SubtitleModel() noexcept {
 QHash<int, QByteArray> Rd::Ui::SubtitleModel::roleNames() const {
     return {
         {IdRole, "id"},
+        {DownloadedRole, "downloaded"},
         {NameRole, "name"},
         {SDHRole, "sdh"},
         {MatchRole, "match"},
@@ -29,6 +31,8 @@ QVariant Rd::Ui::SubtitleModel::data(const QModelIndex& index, int role) const {
         switch(role) {
             case IdRole:
                 return subtitle.fileId;
+            case DownloadedRole:
+                return m_downloaded.contains(subtitle.fileId);
             case NameRole:
                 return subtitle.fileName;
             case SDHRole:
@@ -56,7 +60,19 @@ void Rd::Ui::SubtitleModel::setSubtitles(const QList<Subtitle>& results) {
 void Rd::Ui::SubtitleModel::clear() {
     beginResetModel();
     m_subtitles.clear();
+    m_downloaded.clear();
     endResetModel();
+}
+
+void Rd::Ui::SubtitleModel::markDownloaded(quint64 id) {
+    m_downloaded << id;
+    for (int i = 0; i < m_subtitles.size(); ++i) {
+        if (m_subtitles[i].fileId == id) {
+            QModelIndex idx = index(i);
+            emit dataChanged(idx, idx);
+            break;
+        }
+    }
 }
 
 Subtitle Rd::Ui::SubtitleModel::getSubtitle(quint64 id) const {

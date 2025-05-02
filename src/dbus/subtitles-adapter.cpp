@@ -6,6 +6,8 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
+#include <QtCore/QVariantMap>
+#include <QtCore/QJsonDocument>
 
 SubtitlesAdaptor::SubtitlesAdaptor(QObject *parent)
 : QDBusAbstractAdaptor(parent) {}
@@ -17,9 +19,20 @@ void SubtitlesAdaptor::FindFor(const QString& url) {
 }
 
 void SubtitlesAdaptor::fileIdentified(const QUrl& file, const Feature& feature) {
+    QJsonObject jobj;
+    if (feature.type == u"Movie"_qs) {
+        QVariantMap map = {
+            {"file", file.toLocalFile()},
+            {"type", "Movie"},
+            {"imdbId", feature.imdbDisplay()},
+            {"tmdbId", feature.tmdbId},
+            {"title", feature.title},
+            {"year", feature.year}
+        };
+        jobj = QJsonObject::fromVariantMap(map);
+    }
+    QJsonDocument json(jobj);
 
-
-    //TODO Here we want to convert from file and feature to JSON string
     qDebug() << "Identified" << file << feature << Qt::endl;
-    Q_EMIT Identified("stuff");
+    Q_EMIT Identified(QString(json.toJson(QJsonDocument::Compact)));
 }

@@ -538,6 +538,7 @@ Window {
                                 verticalAlignment: Text.AlignVCenter
                                 leftPadding: 10
                                 text: name
+                                color: downloaded ? "orange" : "black"
                             }
                         }
 

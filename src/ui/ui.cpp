@@ -30,7 +30,6 @@ Rd::Ui::Ui::Ui(QObject* parent)
 
     ((QWindow *)m_window)->setIcon(QIcon(":/res/images/desert-logo.svg"));
 
-//    connect(m_target, &DropTarget::fileDropped, m_search, &Rd::Library::SubtitleFinder::findByFile);
     connect(m_target, &DropTarget::fileDropped, this, &Ui::fileSelected);
 
     connect(m_search, &Rd::Library::SubtitleFinder::subtitlesFound, m_features, &FeatureModel::setFeatures);
@@ -99,6 +98,7 @@ void Rd::Ui::Ui::selectFeature(quint64 id) {
 
 void Rd::Ui::Ui::selectSubtitle(quint64 id) {
     m_download->download(id);
+    m_subtitles->markDownloaded(id);
 }
 
 void Rd::Ui::Ui::clear() {

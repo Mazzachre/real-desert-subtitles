@@ -117,7 +117,13 @@ QString Feature::titleDisplay() const {
 }
 
 QString Feature::imdbDisplay() const {
-    return "tt"+QString("%1").arg(imdbId, 7, 10, QLatin1Char('0'));
+    if (type == u"Movie"_qs) {
+        return "tt"+QString("%1").arg(imdbId, 7, 10, QLatin1Char('0'));
+    } else if (type == u"Episode"_qs) {
+        return "tt"+QString("%1").arg(parentImdbId, 7, 10, QLatin1Char('0'));
+    } else {
+        return "Unknown";
+    }
 }
 
 void Feature::clear() {

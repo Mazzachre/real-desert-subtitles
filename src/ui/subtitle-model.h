@@ -12,6 +12,7 @@ namespace Rd {
         public:
             enum FeatureRoles {
                 IdRole = Qt::UserRole + 1,
+                DownloadedRole,
                 NameRole,
                 SDHRole,
                 MatchRole,
@@ -29,10 +30,12 @@ namespace Rd {
 
             Q_SLOT void setSubtitles(const QList<Subtitle>& results);
             Q_SLOT void clear();
+            Q_SLOT void markDownloaded(quint64 id);
 
             Subtitle getSubtitle(quint64 id) const;
         private:
             QList<Subtitle> m_subtitles;
+            QSet<quint64> m_downloaded;
         };
     }
 }
