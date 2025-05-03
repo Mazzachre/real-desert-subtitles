@@ -45,7 +45,7 @@ struct Feature {
     QList<Subtitle> subtitles;
 
     Feature();
-    Feature(const QJsonObject& item);
+    explicit Feature(const QJsonObject& item);
     Feature(const Feature& other);
     Feature& operator=(const Feature& other);
 

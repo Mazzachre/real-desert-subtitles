@@ -45,14 +45,14 @@ Rd::Ui::Ui::Ui(QObject* parent)
 }
 
 Rd::Ui::Ui::~Ui() noexcept {
-    ((QObject*)m_selected)->deleteLater();
-    ((QObject*)m_config)->deleteLater();
-    ((QObject*)m_features)->deleteLater();
-    ((QObject*)m_subtitles)->deleteLater();
-    ((QObject*)m_target)->deleteLater();
-    ((QObject*)m_search)->deleteLater();
-    ((QObject*)m_download)->deleteLater();
-    ((QObject*)m_saver)->deleteLater();
+    m_selected->deleteLater();
+    m_config->deleteLater();
+    m_features->deleteLater();
+    m_subtitles->deleteLater();
+    m_target->deleteLater();
+    m_search->deleteLater();
+    m_download->deleteLater();
+    m_saver->deleteLater();
     delete m_window;
     delete m_engine;
 }

@@ -92,11 +92,11 @@ void Rd::Library::SubtitleFinder::findShow(const QString& title, const QString& 
 }
 
 void Rd::Library::SubtitleFinder::handleResponse(QNetworkReply *reply) {
-    QByteArray result = ((QIODevice *) reply)->readAll();
+    QByteArray result = reply->readAll();
     qDebug() << "Result" << result << Qt::endl;
 
     if (reply->error() != QNetworkReply::NoError) {
-        Q_EMIT error("Network error - " + ((QIODevice*)reply)->errorString(),  QString(result));
+        Q_EMIT error("Network error - " + reply->errorString(),  QString(result));
         return;
     }
 
@@ -114,5 +114,5 @@ void Rd::Library::SubtitleFinder::handleResponse(QNetworkReply *reply) {
 
     QList<Feature> results = parse(doc.object().value(u"data"_qs).toArray());
     Q_EMIT subtitlesFound(results);
-    ((QObject *) reply)->deleteLater();
+    reply->deleteLater();
 }

@@ -9,7 +9,7 @@ namespace Rd {
         class Authentication : public QObject {
             Q_OBJECT
         public:
-            Authentication(QObject* parent = nullptr);
+            explicit Authentication(QObject* parent = nullptr);
 
             void authenticate();
             Q_SIGNAL void error(const QString& error, const QString& body) const;
